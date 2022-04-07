@@ -1,7 +1,8 @@
-package com.rizqitsani.storyapp
+package com.rizqitsani.storyapp.ui
 
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
+import com.rizqitsani.storyapp.R
 
 class MainActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
