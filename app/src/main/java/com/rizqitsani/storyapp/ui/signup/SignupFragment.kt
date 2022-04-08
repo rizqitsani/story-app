@@ -8,12 +8,16 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.navigation.Navigation
+import android.widget.Toast
+import androidx.fragment.app.viewModels
+import androidx.navigation.findNavController
 import com.rizqitsani.storyapp.R
 import com.rizqitsani.storyapp.databinding.FragmentSignupBinding
 
 class SignupFragment : Fragment() {
     private var _binding: FragmentSignupBinding? = null
     private val binding get() = _binding
+    private val viewModel by viewModels<SignupViewModel>()
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
@@ -28,6 +32,7 @@ class SignupFragment : Fragment() {
 
         playAnimation()
         setupAction()
+        setupObserver()
     }
 
     private fun playAnimation() {
@@ -76,6 +81,52 @@ class SignupFragment : Fragment() {
         binding?.loginButton?.setOnClickListener(
             Navigation.createNavigateOnClickListener(R.id.action_signupFragment_to_loginFragment)
         )
+
+        binding?.signupButton?.setOnClickListener {
+            val name = binding?.nameEditText?.text.toString()
+            val email = binding?.emailEditText?.text.toString()
+            val password = binding?.passwordEditText?.text.toString()
+            when {
+                name.isEmpty() -> {
+                    binding?.nameEditText?.error = "Masukkan nama"
+                }
+                email.isEmpty() -> {
+                    binding?.emailEditText?.error = "Masukkan email"
+                }
+                password.isEmpty() -> {
+                    binding?.passwordEditText?.error = "Masukkan password"
+                }
+                else -> {
+                    viewModel.signup(name, email, password)
+                }
+            }
+        }
+    }
+
+    private fun setupObserver() {
+        viewModel.isSuccess.observe(viewLifecycleOwner) {
+            if (it) {
+                view?.findNavController()?.navigate(R.id.action_signupFragment_to_loginFragment)
+            }
+        }
+
+        viewModel.isLoading.observe(viewLifecycleOwner) {
+            showLoading(it)
+        }
+
+        viewModel.message.observe(viewLifecycleOwner) {
+            showMessage(it)
+        }
+    }
+
+    private fun showLoading(isLoading: Boolean) {
+        binding?.progressBar?.visibility = if (isLoading) View.VISIBLE else View.GONE
+    }
+
+    private fun showMessage(message: String) {
+        if (message != "") {
+            Toast.makeText(activity, message, Toast.LENGTH_SHORT).show()
+        }
     }
 
     override fun onDestroy() {
