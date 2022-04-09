@@ -16,4 +16,6 @@
     <string name="story_username">Nama</string>
     <string name="story_description">Deskripsi</string>
     <string name="not_found">Data tidak ditemukan</string>
+
+    <string name="logout">Keluar</string>
 </resources>

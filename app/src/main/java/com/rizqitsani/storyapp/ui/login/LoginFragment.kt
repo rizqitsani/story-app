@@ -40,7 +40,7 @@ class LoginFragment : Fragment() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        (activity as MainActivity).setFullscreen()
+        (activity as MainActivity).setFullscreen(true)
 
         playAnimation()
         setupAction()

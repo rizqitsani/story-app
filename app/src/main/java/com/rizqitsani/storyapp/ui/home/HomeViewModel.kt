@@ -9,6 +9,7 @@ import com.rizqitsani.storyapp.data.remote.response.ListStoryResponse
 import com.rizqitsani.storyapp.data.remote.response.LoginResult
 import com.rizqitsani.storyapp.data.remote.retrofit.ApiConfig
 import com.rizqitsani.storyapp.domain.model.Story
+import kotlinx.coroutines.launch
 import retrofit2.Call
 import retrofit2.Callback
 import retrofit2.Response
@@ -71,6 +72,16 @@ class HomeViewModel(private val pref: AuthPreferences) : ViewModel() {
 
     fun getCurrentUser(): LiveData<LoginResult> {
         return pref.getCurrentUser().asLiveData()
+    }
+
+    fun logout() {
+        viewModelScope.launch {
+            pref.saveCurrentUser(
+                "",
+                "",
+                ""
+            )
+        }
     }
 
     companion object {
