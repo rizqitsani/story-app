@@ -11,6 +11,7 @@ import androidx.datastore.core.DataStore
 import androidx.datastore.preferences.core.Preferences
 import androidx.datastore.preferences.preferencesDataStore
 import androidx.fragment.app.viewModels
+import androidx.navigation.findNavController
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.rizqitsani.storyapp.R
 import com.rizqitsani.storyapp.data.preferences.AuthPreferences
@@ -88,7 +89,8 @@ class HomeFragment : Fragment() {
         listStoryAdapter.setListStory(listStory)
         listStoryAdapter.setOnItemClickCallback(object : ListStoryAdapter.OnItemClickCallback {
             override fun onItemClicked(data: Story) {
-                showMessage(data.name)
+                val toStoryDetailFragment = HomeFragmentDirections.actionHomeFragmentToStoryDetailFragment(data)
+                view?.findNavController()?.navigate(toStoryDetailFragment)
             }
         })
     }

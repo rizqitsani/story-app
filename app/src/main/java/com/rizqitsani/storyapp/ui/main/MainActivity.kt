@@ -69,4 +69,8 @@ class MainActivity : AppCompatActivity() {
         }
         supportActionBar?.hide()
     }
+
+    fun setActionBarTitle(title: String) {
+        supportActionBar?.title = title
+    }
 }
