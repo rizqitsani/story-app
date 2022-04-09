@@ -11,4 +11,9 @@
     <string name="login">Masuk</string>
     <string name="message_login_page">Masukkan dulu datamu ya!</string>
     <string name="title_login_page">Siap berbagi pengalaman belajarmu?</string>
+
+    <string name="story_photo">Gambar Story</string>
+    <string name="story_username">Nama</string>
+    <string name="story_description">Deskripsi</string>
+    <string name="not_found">Data tidak ditemukan</string>
 </resources>

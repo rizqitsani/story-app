@@ -1,11 +1,10 @@
 package com.rizqitsani.storyapp.data.remote.retrofit
 
+import com.rizqitsani.storyapp.data.remote.response.ListStoryResponse
 import com.rizqitsani.storyapp.data.remote.response.LoginResponse
 import com.rizqitsani.storyapp.data.remote.response.SignupResponse
 import retrofit2.Call
-import retrofit2.http.Field
-import retrofit2.http.FormUrlEncoded
-import retrofit2.http.POST
+import retrofit2.http.*
 
 interface ApiService {
     @FormUrlEncoded
@@ -23,4 +22,9 @@ interface ApiService {
         @Field("email") email: String,
         @Field("password") password: String
     ): Call<LoginResponse>
+
+    @GET("stories")
+    fun getStories(
+        @Header("Authorization") token: String
+    ): Call<ListStoryResponse>
 }
