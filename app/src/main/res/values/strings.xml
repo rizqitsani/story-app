@@ -18,4 +18,12 @@
     <string name="not_found">Data tidak ditemukan</string>
 
     <string name="logout">Keluar</string>
+
+    <string name="add_story">Tambah Story</string>
+    <string name="image_preview">Pratinjau gambar</string>
+    <string name="camera">Kamera</string>
+    <string name="gallery">Galeri</string>
+    <string name="upload">Unggah</string>
+    <string name="take_photo">Ambil gambar</string>
+    <string name="switch_camera">Putar kamera</string>
 </resources>

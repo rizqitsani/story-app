@@ -50,6 +50,11 @@ class HomeFragment : Fragment() {
         setupObserver()
     }
 
+    override fun onResume() {
+        super.onResume()
+        binding?.rvStory?.scrollToPosition(0)
+    }
+
     private fun setupRvAdapter() {
         listStoryAdapter = ListStoryAdapter()
 

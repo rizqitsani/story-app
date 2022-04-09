@@ -13,6 +13,9 @@
         <action
             android:id="@+id/action_homeFragment_to_storyDetailFragment"
             app:destination="@id/storyDetailFragment" />
+        <action
+            android:id="@+id/action_homeFragment_to_addStoryFragment"
+            app:destination="@id/addStoryFragment" />
     </fragment>
     <fragment
         android:id="@+id/loginFragment"
@@ -35,10 +38,30 @@
     <fragment
         android:id="@+id/storyDetailFragment"
         android:name="com.rizqitsani.storyapp.ui.storydetail.StoryDetailFragment"
-        android:label="fragment_story_detail"
         tools:layout="@layout/fragment_story_detail" >
         <argument
             android:name="story"
             app:argType="com.rizqitsani.storyapp.domain.model.Story" />
+    </fragment>
+    <fragment
+        android:id="@+id/addStoryFragment"
+        android:name="com.rizqitsani.storyapp.ui.addstory.AddStoryFragment"
+        android:label="@string/add_story"
+        tools:layout="@layout/fragment_add_story" >
+        <action
+            android:id="@+id/action_addStoryFragment_to_homeFragment"
+            app:destination="@id/homeFragment" />
+        <action
+            android:id="@+id/action_addStoryFragment_to_cameraFragment"
+            app:destination="@id/cameraFragment" />
+    </fragment>
+    <fragment
+        android:id="@+id/cameraFragment"
+        android:name="com.rizqitsani.storyapp.ui.camera.CameraFragment"
+        android:label="fragment_camera"
+        tools:layout="@layout/fragment_camera" >
+        <action
+            android:id="@+id/action_cameraFragment_to_addStoryFragment"
+            app:destination="@id/addStoryFragment" />
     </fragment>
 </navigation>
