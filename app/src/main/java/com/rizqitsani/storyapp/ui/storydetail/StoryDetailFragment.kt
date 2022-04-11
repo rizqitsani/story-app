@@ -1,6 +1,7 @@
 package com.rizqitsani.storyapp.ui.storydetail
 
 import android.os.Bundle
+import android.transition.TransitionInflater
 import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
@@ -14,6 +15,12 @@ import com.rizqitsani.storyapp.ui.main.MainActivity
 class StoryDetailFragment : Fragment() {
     private var _binding: FragmentStoryDetailBinding? = null
     private val binding get() = _binding
+
+    override fun onCreate(savedInstanceState: Bundle?) {
+        super.onCreate(savedInstanceState)
+        sharedElementEnterTransition =
+            TransitionInflater.from(context).inflateTransition(android.R.transition.move)
+    }
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
@@ -32,6 +39,10 @@ class StoryDetailFragment : Fragment() {
         val story = StoryDetailFragmentArgs.fromBundle(arguments as Bundle).story
 
         (activity as MainActivity).setActionBarTitle(story.name)
+
+        binding?.imgStoryPhoto?.transitionName = "image${story.id}"
+        binding?.tvStoryName?.transitionName = "name${story.id}"
+        binding?.tvStoryDescription?.transitionName = "description${story.id}"
 
         Glide.with(this)
             .load(story.photoUrl)

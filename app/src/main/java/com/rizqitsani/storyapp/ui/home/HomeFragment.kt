@@ -61,7 +61,14 @@ class HomeFragment : Fragment() {
         val layoutManager = LinearLayoutManager(activity)
         binding?.rvStory?.layoutManager = layoutManager
 
-        binding?.rvStory?.adapter = listStoryAdapter
+        binding?.rvStory?.apply {
+            this.adapter = listStoryAdapter
+            postponeEnterTransition()
+            viewTreeObserver.addOnPreDrawListener {
+                startPostponedEnterTransition()
+                true
+            }
+        }
     }
 
     private fun setupObserver() {
@@ -95,13 +102,6 @@ class HomeFragment : Fragment() {
         }
 
         listStoryAdapter.setListStory(listStory)
-        listStoryAdapter.setOnItemClickCallback(object : ListStoryAdapter.OnItemClickCallback {
-            override fun onItemClicked(data: Story) {
-                val toStoryDetailFragment =
-                    HomeFragmentDirections.actionHomeFragmentToStoryDetailFragment(data)
-                view?.findNavController()?.navigate(toStoryDetailFragment)
-            }
-        })
     }
 
     private fun showLoading(isLoading: Boolean) {

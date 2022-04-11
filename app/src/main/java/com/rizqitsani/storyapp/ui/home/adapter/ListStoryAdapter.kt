@@ -2,12 +2,15 @@ package com.rizqitsani.storyapp.ui.home.adapter
 
 import android.view.LayoutInflater
 import android.view.ViewGroup
+import androidx.navigation.findNavController
+import androidx.navigation.fragment.FragmentNavigatorExtras
 import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.Glide
 import com.bumptech.glide.request.RequestOptions
 import com.rizqitsani.storyapp.databinding.ItemRowStoryBinding
 import com.rizqitsani.storyapp.domain.model.Story
+import com.rizqitsani.storyapp.ui.home.HomeFragmentDirections
 import com.rizqitsani.storyapp.utils.StoryDiffCallback
 
 class ListStoryAdapter : RecyclerView.Adapter<ListStoryAdapter.ViewHolder>() {
@@ -18,12 +21,6 @@ class ListStoryAdapter : RecyclerView.Adapter<ListStoryAdapter.ViewHolder>() {
         this.listStory.clear()
         this.listStory.addAll(listStory)
         diffResult.dispatchUpdatesTo(this)
-    }
-
-    private lateinit var onItemClickCallback: OnItemClickCallback
-
-    interface OnItemClickCallback {
-        fun onItemClicked(data: Story)
     }
 
     class ViewHolder(val binding: ItemRowStoryBinding) : RecyclerView.ViewHolder(binding.root)
@@ -42,13 +39,22 @@ class ListStoryAdapter : RecyclerView.Adapter<ListStoryAdapter.ViewHolder>() {
             .apply(RequestOptions().override(550, 550))
             .into(holder.binding.imgItemPhoto)
 
+        holder.binding.imgItemPhoto.transitionName = "image${listStory[position].id}"
+        holder.binding.tvItemName.transitionName = "name${listStory[position].id}"
+        holder.binding.tvItemDescription.transitionName = "description${listStory[position].id}"
+
         holder.binding.tvItemName.text = story.name
         holder.binding.tvItemDescription.text = story.description
-        holder.itemView.setOnClickListener { onItemClickCallback.onItemClicked(listStory[holder.adapterPosition]) }
-    }
-
-    fun setOnItemClickCallback(onItemClickCallback: OnItemClickCallback) {
-        this.onItemClickCallback = onItemClickCallback
+        holder.itemView.setOnClickListener {
+            val toStoryDetailFragment =
+                HomeFragmentDirections.actionHomeFragmentToStoryDetailFragment(listStory[holder.adapterPosition])
+            val extras = FragmentNavigatorExtras(
+                holder.binding.imgItemPhoto to "image${listStory[position].id}",
+                holder.binding.tvItemName to  "name${listStory[position].id}",
+                holder.binding.tvItemDescription to "description${listStory[position].id}"
+            )
+            it.findNavController().navigate(toStoryDetailFragment, extras)
+        }
     }
 
     override fun getItemCount(): Int = listStory.size
