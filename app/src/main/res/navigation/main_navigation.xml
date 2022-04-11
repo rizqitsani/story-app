@@ -62,7 +62,7 @@
     <fragment
         android:id="@+id/cameraFragment"
         android:name="com.rizqitsani.storyapp.ui.camera.CameraFragment"
-        android:label="fragment_camera"
+        android:label="@string/camera"
         tools:layout="@layout/fragment_camera">
         <action
             android:id="@+id/action_cameraFragment_to_addStoryFragment"

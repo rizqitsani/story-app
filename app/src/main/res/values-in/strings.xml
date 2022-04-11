@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="app_name">Story App</string>
+
+    <string name="signup">Daftar</string>
+    <string name="illustration">Ilustrasi</string>
+    <string name="title_signup_page">Lengkapi data dirimu di bawah ini ya!</string>
+    <string name="name">Nama</string>
+    <string name="email">Email</string>
+    <string name="password">Password</string>
+
+    <string name="login">Masuk</string>
+    <string name="message_login_page">Masukkan dulu datamu ya!</string>
+    <string name="title_login_page">Siap berbagi pengalaman belajarmu?</string>
+
+    <string name="story_photo">Gambar Story</string>
+    <string name="story_username">Nama</string>
+    <string name="story_description">Deskripsi</string>
+    <string name="not_found">Data tidak ditemukan</string>
+
+    <string name="logout">Keluar</string>
+
+    <string name="add_story">Tambah Story</string>
+    <string name="image_preview">Pratinjau gambar</string>
+    <string name="camera">Kamera</string>
+    <string name="gallery">Galeri</string>
+    <string name="upload">Unggah</string>
+    <string name="take_photo">Ambil gambar</string>
+    <string name="switch_camera">Putar kamera</string>
+</resources>

@@ -1,29 +1,29 @@
 <resources>
     <string name="app_name">Story App</string>
 
-    <string name="signup">Daftar</string>
-    <string name="illustration">Ilustrasi</string>
-    <string name="title_signup_page">Lengkapi data dirimu di bawah ini ya!</string>
-    <string name="name">Nama</string>
+    <string name="signup">Sign Up</string>
+    <string name="illustration">Illustration</string>
+    <string name="title_signup_page">Please complete your data below</string>
+    <string name="name">Name</string>
     <string name="email">Email</string>
     <string name="password">Password</string>
 
-    <string name="login">Masuk</string>
-    <string name="message_login_page">Masukkan dulu datamu ya!</string>
-    <string name="title_login_page">Siap berbagi pengalaman belajarmu?</string>
+    <string name="login">Login</string>
+    <string name="message_login_page">Please enter your data</string>
+    <string name="title_login_page">Ready to share your learning experiences?</string>
 
-    <string name="story_photo">Gambar Story</string>
-    <string name="story_username">Nama</string>
-    <string name="story_description">Deskripsi</string>
-    <string name="not_found">Data tidak ditemukan</string>
+    <string name="story_photo">Story photo</string>
+    <string name="story_username">Name</string>
+    <string name="story_description">Description</string>
+    <string name="not_found">Data not found</string>
 
-    <string name="logout">Keluar</string>
+    <string name="logout">Logout</string>
 
-    <string name="add_story">Tambah Story</string>
-    <string name="image_preview">Pratinjau gambar</string>
-    <string name="camera">Kamera</string>
-    <string name="gallery">Galeri</string>
-    <string name="upload">Unggah</string>
-    <string name="take_photo">Ambil gambar</string>
-    <string name="switch_camera">Putar kamera</string>
+    <string name="add_story">Add Story</string>
+    <string name="image_preview">Image preview</string>
+    <string name="camera">Camera</string>
+    <string name="gallery">Gallery</string>
+    <string name="upload">Upload</string>
+    <string name="take_photo">Take picture</string>
+    <string name="switch_camera">Switch camera</string>
 </resources>
