@@ -26,4 +26,6 @@
     <string name="upload">Upload</string>
     <string name="take_photo">Take picture</string>
     <string name="switch_camera">Switch camera</string>
+
+    <string name="map_view">Map View</string>
 </resources>

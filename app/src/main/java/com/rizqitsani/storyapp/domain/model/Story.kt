@@ -9,4 +9,6 @@ data class Story(
     val name: String = "",
     val description: String = "",
     val photoUrl: String = "",
-): Parcelable
+    val lat: Double? = null,
+    val lon: Double? = null
+) : Parcelable

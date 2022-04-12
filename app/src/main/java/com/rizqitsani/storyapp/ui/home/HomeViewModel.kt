@@ -45,7 +45,9 @@ class HomeViewModel(private val pref: AuthPreferences) : ViewModel() {
                                 it.id,
                                 it.name,
                                 it.description,
-                                it.photoUrl
+                                it.photoUrl,
+                                it.lat,
+                                it.lon
                             )
                         )
                     }

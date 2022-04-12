@@ -20,6 +20,9 @@
         <action
             android:id="@+id/action_homeFragment_to_addStoryFragment"
             app:destination="@id/addStoryFragment" />
+        <action
+            android:id="@+id/action_homeFragment_to_mapFragment"
+            app:destination="@id/mapFragment" />
     </fragment>
     <fragment
         android:id="@+id/loginFragment"
@@ -68,4 +71,9 @@
             android:id="@+id/action_cameraFragment_to_addStoryFragment"
             app:destination="@id/addStoryFragment" />
     </fragment>
+    <fragment
+        android:id="@+id/mapFragment"
+        android:name="com.rizqitsani.storyapp.ui.map.MapFragment"
+        android:label="@string/map_view"
+        tools:layout="@layout/fragment_map" />
 </navigation>

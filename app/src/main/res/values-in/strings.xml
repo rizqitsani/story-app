@@ -27,4 +27,6 @@
     <string name="upload">Unggah</string>
     <string name="take_photo">Ambil gambar</string>
     <string name="switch_camera">Putar kamera</string>
+
+    <string name="map_view">Tampilan Map</string>
 </resources>

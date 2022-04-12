@@ -8,6 +8,11 @@
             android:title="@string/add_story"
             app:showAsAction="always" />
         <item
+            android:id="@+id/mapFragment"
+            android:icon="@drawable/ic_baseline_location_on_24"
+            android:title="@string/map_view"
+            app:showAsAction="ifRoom" />
+        <item
             android:id="@+id/menu_logout"
             android:title="@string/logout" />
     </group>
