@@ -31,6 +31,13 @@ interface ApiService {
         @Header("Authorization") token: String
     ): Call<ListStoryResponse>
 
+    @GET("stories")
+    suspend fun getPagedStories(
+        @Header("Authorization") token: String,
+        @Query("page") page: Int,
+        @Query("size") size: Int
+    ): ListStoryResponse
+
     @Multipart
     @POST("stories")
     fun uploadImage(

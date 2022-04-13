@@ -32,7 +32,8 @@ class MapFragment : Fragment(), OnMapReadyCallback {
     private val binding get() = _binding
     private val viewModel: HomeViewModel by viewModels {
         HomeViewModelFactory(
-            AuthPreferences.getInstance(context?.dataStore as DataStore<Preferences>)
+            AuthPreferences.getInstance(context?.dataStore as DataStore<Preferences>),
+            requireActivity()
         )
     }
 
@@ -92,7 +93,12 @@ class MapFragment : Fragment(), OnMapReadyCallback {
     private fun setMapStyle() {
         try {
             val success =
-                mMap.setMapStyle(MapStyleOptions.loadRawResourceStyle(requireActivity(), R.raw.map_style))
+                mMap.setMapStyle(
+                    MapStyleOptions.loadRawResourceStyle(
+                        requireActivity(),
+                        R.raw.map_style
+                    )
+                )
             if (!success) {
                 Log.e(TAG, "Style parsing failed.")
             }

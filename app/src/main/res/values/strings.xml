@@ -16,6 +16,7 @@
     <string name="story_username">Name</string>
     <string name="story_description">Description</string>
     <string name="not_found">Data not found</string>
+    <string name="retry">Retry</string>
 
     <string name="logout">Logout</string>
 

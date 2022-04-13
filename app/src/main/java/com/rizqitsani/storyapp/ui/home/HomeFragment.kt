@@ -5,18 +5,20 @@ import android.os.Bundle
 import android.view.*
 import androidx.fragment.app.Fragment
 import android.widget.Toast
+import androidx.core.view.isVisible
 import androidx.datastore.core.DataStore
 import androidx.datastore.preferences.core.Preferences
 import androidx.datastore.preferences.preferencesDataStore
 import androidx.fragment.app.viewModels
 import androidx.navigation.findNavController
 import androidx.navigation.ui.NavigationUI
+import androidx.paging.LoadState
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.rizqitsani.storyapp.R
 import com.rizqitsani.storyapp.data.preferences.AuthPreferences
 import com.rizqitsani.storyapp.databinding.FragmentHomeBinding
-import com.rizqitsani.storyapp.domain.model.Story
 import com.rizqitsani.storyapp.ui.home.adapter.ListStoryAdapter
+import com.rizqitsani.storyapp.ui.home.adapter.LoadingStateAdapter
 import com.rizqitsani.storyapp.ui.main.MainActivity
 
 private val Context.dataStore: DataStore<Preferences> by preferencesDataStore(name = "auth")
@@ -26,7 +28,8 @@ class HomeFragment : Fragment() {
     private val binding get() = _binding
     private val viewModel: HomeViewModel by viewModels {
         HomeViewModelFactory(
-            AuthPreferences.getInstance(context?.dataStore as DataStore<Preferences>)
+            AuthPreferences.getInstance(context?.dataStore as DataStore<Preferences>),
+            requireActivity()
         )
     }
 
@@ -61,8 +64,23 @@ class HomeFragment : Fragment() {
         val layoutManager = LinearLayoutManager(activity)
         binding?.rvStory?.layoutManager = layoutManager
 
+        listStoryAdapter.addLoadStateListener { loadState ->
+            if (loadState.source.refresh is LoadState.NotLoading && loadState.append.endOfPaginationReached) {
+                binding?.tvPlaceholder?.text = resources.getString(R.string.not_found)
+                binding?.tvPlaceholder?.isVisible = true
+                binding?.rvStory?.isVisible = false
+            } else {
+                binding?.tvPlaceholder?.isVisible = false
+                binding?.rvStory?.isVisible = true
+            }
+        }
+
         binding?.rvStory?.apply {
-            this.adapter = listStoryAdapter
+            this.adapter = listStoryAdapter.withLoadStateFooter(
+                footer = LoadingStateAdapter {
+                    listStoryAdapter.retry()
+                }
+            )
             postponeEnterTransition()
             viewTreeObserver.addOnPreDrawListener {
                 startPostponedEnterTransition()
@@ -74,12 +92,12 @@ class HomeFragment : Fragment() {
     private fun setupObserver() {
         viewModel.getCurrentUser().observe(viewLifecycleOwner) {
             if (it.token.isNotEmpty()) {
-                viewModel.getStories(it.token)
+                viewModel.getPagedStories(it.token)
             }
         }
 
-        viewModel.listStory.observe(viewLifecycleOwner) {
-            setListStory(it)
+        viewModel.listPagedStory.observe(viewLifecycleOwner) {
+            listStoryAdapter.submitData(lifecycle, it)
         }
 
         viewModel.isLoading.observe(viewLifecycleOwner) {
@@ -89,19 +107,6 @@ class HomeFragment : Fragment() {
         viewModel.message.observe(viewLifecycleOwner) {
             showMessage(it)
         }
-    }
-
-    private fun setListStory(listStory: List<Story>) {
-        if (listStory.isNotEmpty()) {
-            binding?.tvPlaceholder?.visibility = View.GONE
-            binding?.rvStory?.visibility = View.VISIBLE
-        } else {
-            binding?.tvPlaceholder?.text = resources.getString(R.string.not_found)
-            binding?.tvPlaceholder?.visibility = View.VISIBLE
-            binding?.rvStory?.visibility = View.GONE
-        }
-
-        listStoryAdapter.setListStory(listStory)
     }
 
     private fun showLoading(isLoading: Boolean) {
