@@ -1,59 +1,23 @@
 package com.rizqitsani.storyapp.ui.signup
 
-import android.util.Log
-import androidx.lifecycle.LiveData
-import androidx.lifecycle.MutableLiveData
+import android.content.Context
 import androidx.lifecycle.ViewModel
-import com.google.gson.Gson
-import com.rizqitsani.storyapp.data.remote.response.SignupResponse
-import com.rizqitsani.storyapp.data.remote.retrofit.ApiConfig
-import com.rizqitsani.storyapp.data.remote.response.ErrorResponse
-import retrofit2.Call
-import retrofit2.Callback
-import retrofit2.Response
+import androidx.lifecycle.ViewModelProvider
+import com.rizqitsani.storyapp.data.repository.AuthRepository
+import com.rizqitsani.storyapp.di.Injection
 
-class SignupViewModel : ViewModel() {
-    private val _isLoading = MutableLiveData<Boolean>()
-    val isLoading: LiveData<Boolean> = _isLoading
+class SignupViewModel(private val authRepository: AuthRepository) : ViewModel() {
+    fun signup(name: String, email: String, password: String) =
+        authRepository.signup(name, email, password)
+}
 
-    private val _isSuccess = MutableLiveData<Boolean>()
-    val isSuccess: LiveData<Boolean> = _isSuccess
-
-    private val _message = MutableLiveData<String>()
-    val message: LiveData<String> = _message
-
-    fun signup(name: String, email: String, password: String) {
-        _isLoading.value = true
-        _message.value = ""
-        val client = ApiConfig.getApiService().signup(name, email, password)
-        client.enqueue(object : Callback<SignupResponse> {
-            override fun onResponse(
-                call: Call<SignupResponse>,
-                response: Response<SignupResponse>
-            ) {
-                _isLoading.value = false
-                if (response.isSuccessful) {
-                    _isSuccess.value = true
-                    _message.value = "Berhasil membuat akun"
-                } else {
-                    val errorResponse: ErrorResponse = Gson().fromJson(
-                        response.errorBody()?.charStream(),
-                        ErrorResponse::class.java
-                    )
-                    _message.value = errorResponse.message
-                    Log.e(TAG, "onFailure: ${errorResponse.message}")
-                }
-            }
-
-            override fun onFailure(call: Call<SignupResponse>, t: Throwable) {
-                _isLoading.value = false
-                _message.value = "Terjadi kesalahan. Mohon coba beberapa saat lagi"
-                Log.e(TAG, "onFailure: ${t.message.toString()}")
-            }
-        })
-    }
-
-    companion object {
-        private const val TAG = "SignupViewModel"
+class SignupViewModelFactory(private val context: Context) :
+    ViewModelProvider.NewInstanceFactory() {
+    @Suppress("UNCHECKED_CAST")
+    override fun <T : ViewModel> create(modelClass: Class<T>): T {
+        if (modelClass.isAssignableFrom(SignupViewModel::class.java)) {
+            return SignupViewModel(Injection.provideAuthRepository(context)) as T
+        }
+        throw IllegalArgumentException("Unknown ViewModel class: " + modelClass.name)
     }
 }

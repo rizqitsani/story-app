@@ -6,30 +6,29 @@ import com.rizqitsani.storyapp.data.remote.response.LoginResponse
 import com.rizqitsani.storyapp.data.remote.response.SignupResponse
 import okhttp3.MultipartBody
 import okhttp3.RequestBody
-import retrofit2.Call
 import retrofit2.http.*
 
 interface ApiService {
     @FormUrlEncoded
     @POST("register")
-    fun signup(
+    suspend fun signup(
         @Field("name") name: String,
         @Field("email") email: String,
         @Field("password") password: String
-    ): Call<SignupResponse>
+    ): SignupResponse
 
 
     @FormUrlEncoded
     @POST("login")
-    fun login(
+    suspend fun login(
         @Field("email") email: String,
         @Field("password") password: String
-    ): Call<LoginResponse>
+    ): LoginResponse
 
     @GET("stories")
-    fun getStories(
+    suspend fun getStories(
         @Header("Authorization") token: String
-    ): Call<ListStoryResponse>
+    ): ListStoryResponse
 
     @GET("stories")
     suspend fun getPagedStories(
@@ -40,9 +39,9 @@ interface ApiService {
 
     @Multipart
     @POST("stories")
-    fun uploadImage(
+    suspend fun uploadImage(
         @Header("Authorization") token: String,
         @Part file: MultipartBody.Part,
         @Part("description") description: RequestBody,
-    ): Call<AddStoryResponse>
+    ): AddStoryResponse
 }

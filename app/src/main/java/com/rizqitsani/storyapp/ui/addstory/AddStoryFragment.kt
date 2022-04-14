@@ -1,7 +1,6 @@
 package com.rizqitsani.storyapp.ui.addstory
 
 import android.Manifest
-import android.content.Context
 import android.content.Intent
 import android.content.pm.PackageManager
 import android.graphics.BitmapFactory
@@ -15,15 +14,13 @@ import android.widget.Toast
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.content.ContextCompat
-import androidx.datastore.core.DataStore
-import androidx.datastore.preferences.core.Preferences
-import androidx.datastore.preferences.preferencesDataStore
 import androidx.fragment.app.setFragmentResultListener
 import androidx.fragment.app.viewModels
 import androidx.navigation.Navigation
 import androidx.navigation.findNavController
 import com.rizqitsani.storyapp.R
-import com.rizqitsani.storyapp.data.preferences.AuthPreferences
+import com.rizqitsani.storyapp.data.Result
+import com.rizqitsani.storyapp.data.remote.response.AddStoryResponse
 import com.rizqitsani.storyapp.databinding.FragmentAddStoryBinding
 import com.rizqitsani.storyapp.ui.main.MainActivity
 import com.rizqitsani.storyapp.utils.reduceFileImage
@@ -37,19 +34,14 @@ import okhttp3.RequestBody.Companion.asRequestBody
 import okhttp3.RequestBody.Companion.toRequestBody
 import java.io.File
 
-private val Context.dataStore: DataStore<Preferences> by preferencesDataStore(name = "auth")
-
 class AddStoryFragment : Fragment() {
     private var _binding: FragmentAddStoryBinding? = null
     private val binding get() = _binding
     private val viewModel: AddStoryViewModel by viewModels {
-        AddStoryViewModelFactory(
-            AuthPreferences.getInstance(context?.dataStore as DataStore<Preferences>)
-        )
+        AddStoryViewModelFactory(requireActivity())
     }
 
     private var getFile: File? = null
-    private var token: String = ""
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -80,27 +72,8 @@ class AddStoryFragment : Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
-        setupPermision()
-        setupObserver()
+        setupPermission()
         setupAction()
-    }
-
-    private fun setupObserver() {
-        viewModel.getCurrentUser().observe(viewLifecycleOwner) {
-            token = it.token
-        }
-
-        viewModel.isSuccess.observe(viewLifecycleOwner) {
-            view?.findNavController()?.navigate(R.id.action_addStoryFragment_to_homeFragment)
-        }
-
-        viewModel.isLoading.observe(viewLifecycleOwner) {
-            showLoading(it)
-        }
-
-        viewModel.message.observe(viewLifecycleOwner) {
-            showMessage(it)
-        }
     }
 
     private fun setupAction() {
@@ -134,7 +107,8 @@ class AddStoryFragment : Fragment() {
         val file = reduceFileImage(getFile as File)
 
         val description =
-            binding?.descriptionEditText?.text?.toString()?.toRequestBody("text/plain".toMediaType())
+            binding?.descriptionEditText?.text?.toString()
+                ?.toRequestBody("text/plain".toMediaType())
         val requestImageFile = file.asRequestBody("image/jpeg".toMediaTypeOrNull())
         val imageMultipart: MultipartBody.Part = MultipartBody.Part.createFormData(
             "photo",
@@ -142,10 +116,31 @@ class AddStoryFragment : Fragment() {
             requestImageFile
         )
 
-        viewModel.addStory(token, imageMultipart, description as RequestBody)
+        viewModel.user.observe(viewLifecycleOwner) { user ->
+            viewModel.addStory(user.token, imageMultipart, description as RequestBody)
+                .observe(viewLifecycleOwner) {
+                    addStoryObserver(it)
+                }
+        }
     }
 
-    private fun setupPermision() {
+    private fun addStoryObserver(result: Result<AddStoryResponse>) {
+        when (result) {
+            is Result.Loading -> {
+                showLoading(true)
+            }
+            is Result.Success -> {
+                showLoading(false)
+                view?.findNavController()?.navigate(R.id.action_addStoryFragment_to_homeFragment)
+            }
+            is Result.Error -> {
+                showLoading(false)
+                showMessage(getString(R.string.something_wrong))
+            }
+        }
+    }
+
+    private fun setupPermission() {
         val permission = ContextCompat.checkSelfPermission(
             requireContext(), REQUIRED_PERMISSIONS
         )

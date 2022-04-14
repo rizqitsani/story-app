@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
     <string name="app_name">Story App</string>
+    <string name="something_wrong">Terjadi kesalahan</string>
 
     <string name="signup">Daftar</string>
     <string name="illustration">Ilustrasi</string>

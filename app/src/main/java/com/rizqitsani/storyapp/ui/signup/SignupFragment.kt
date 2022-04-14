@@ -12,12 +12,16 @@ import android.widget.Toast
 import androidx.fragment.app.viewModels
 import androidx.navigation.findNavController
 import com.rizqitsani.storyapp.R
+import com.rizqitsani.storyapp.data.Result
+import com.rizqitsani.storyapp.data.remote.response.SignupResponse
 import com.rizqitsani.storyapp.databinding.FragmentSignupBinding
 
 class SignupFragment : Fragment() {
     private var _binding: FragmentSignupBinding? = null
     private val binding get() = _binding
-    private val viewModel by viewModels<SignupViewModel>()
+    private val viewModel: SignupViewModel by viewModels{
+        SignupViewModelFactory(requireActivity())
+    }
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
@@ -32,7 +36,6 @@ class SignupFragment : Fragment() {
 
         playAnimation()
         setupAction()
-        setupObserver()
     }
 
     private fun playAnimation() {
@@ -97,25 +100,27 @@ class SignupFragment : Fragment() {
                     binding?.passwordEditText?.error = "Masukkan password"
                 }
                 else -> {
-                    viewModel.signup(name, email, password)
+                    viewModel.signup(name, email, password).observe(viewLifecycleOwner) {
+                        signupObserver(it)
+                    }
                 }
             }
         }
     }
 
-    private fun setupObserver() {
-        viewModel.isSuccess.observe(viewLifecycleOwner) {
-            if (it) {
+    private fun signupObserver(result: Result<SignupResponse>) {
+        when (result) {
+            is Result.Loading -> {
+                showLoading(true)
+            }
+            is Result.Success -> {
+                showLoading(false)
                 view?.findNavController()?.navigate(R.id.action_signupFragment_to_loginFragment)
             }
-        }
-
-        viewModel.isLoading.observe(viewLifecycleOwner) {
-            showLoading(it)
-        }
-
-        viewModel.message.observe(viewLifecycleOwner) {
-            showMessage(it)
+            is Result.Error -> {
+                showLoading(false)
+                showMessage(getString(R.string.something_wrong))
+            }
         }
     }
 
