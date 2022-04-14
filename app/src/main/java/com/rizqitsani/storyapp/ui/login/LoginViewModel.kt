@@ -64,3 +64,14 @@ class LoginViewModel(private val pref: AuthPreferences) : ViewModel() {
         private const val TAG = "LoginViewModel"
     }
 }
+
+class LoginViewModelFactory(private val pref: AuthPreferences) :
+    ViewModelProvider.NewInstanceFactory() {
+    @Suppress("UNCHECKED_CAST")
+    override fun <T : ViewModel> create(modelClass: Class<T>): T {
+        if (modelClass.isAssignableFrom(LoginViewModel::class.java)) {
+            return LoginViewModel(pref) as T
+        }
+        throw IllegalArgumentException("Unknown ViewModel class: " + modelClass.name)
+    }
+}

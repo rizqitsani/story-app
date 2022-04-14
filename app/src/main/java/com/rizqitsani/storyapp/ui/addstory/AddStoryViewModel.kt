@@ -1,10 +1,7 @@
 package com.rizqitsani.storyapp.ui.addstory
 
 import android.util.Log
-import androidx.lifecycle.LiveData
-import androidx.lifecycle.MutableLiveData
-import androidx.lifecycle.ViewModel
-import androidx.lifecycle.asLiveData
+import androidx.lifecycle.*
 import com.google.gson.Gson
 import com.rizqitsani.storyapp.data.preferences.AuthPreferences
 import com.rizqitsani.storyapp.data.remote.response.AddStoryResponse
@@ -66,5 +63,16 @@ class AddStoryViewModel(private val pref: AuthPreferences) : ViewModel() {
 
     companion object {
         private const val TAG = "AddStoryViewModel"
+    }
+}
+
+class AddStoryViewModelFactory(private val pref: AuthPreferences) :
+    ViewModelProvider.NewInstanceFactory() {
+    @Suppress("UNCHECKED_CAST")
+    override fun <T : ViewModel> create(modelClass: Class<T>): T {
+        if (modelClass.isAssignableFrom(AddStoryViewModel::class.java)) {
+            return AddStoryViewModel(pref) as T
+        }
+        throw IllegalArgumentException("Unknown ViewModel class: " + modelClass.name)
     }
 }
