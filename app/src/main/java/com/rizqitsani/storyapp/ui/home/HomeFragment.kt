@@ -13,7 +13,6 @@ import com.rizqitsani.storyapp.R
 import com.rizqitsani.storyapp.databinding.FragmentHomeBinding
 import com.rizqitsani.storyapp.ui.home.adapter.ListStoryAdapter
 import com.rizqitsani.storyapp.ui.home.adapter.LoadingStateAdapter
-import com.rizqitsani.storyapp.ui.main.MainActivity
 
 class HomeFragment : Fragment() {
     private var _binding: FragmentHomeBinding? = null
@@ -35,7 +34,6 @@ class HomeFragment : Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
-        (activity as MainActivity).setFullscreen(false)
         setHasOptionsMenu(true)
 
         setupRvAdapter()
@@ -80,10 +78,8 @@ class HomeFragment : Fragment() {
 
     private fun setupObserver() {
         viewModel.user.observe(viewLifecycleOwner) { user ->
-            if (user.token.isNotEmpty()) {
-                viewModel.getPagedStories(user.token).observe(viewLifecycleOwner) {
-                    listStoryAdapter.submitData(lifecycle, it)
-                }
+            viewModel.getPagedStories(user.token).observe(viewLifecycleOwner) {
+                listStoryAdapter.submitData(lifecycle, it)
             }
         }
     }

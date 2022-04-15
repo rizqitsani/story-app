@@ -9,6 +9,7 @@ import com.rizqitsani.storyapp.data.database.RemoteKeys
 import com.rizqitsani.storyapp.data.database.StoryDatabase
 import com.rizqitsani.storyapp.data.remote.retrofit.ApiService
 import com.rizqitsani.storyapp.domain.model.Story
+import com.rizqitsani.storyapp.utils.wrapEspressoIdlingResource
 
 @OptIn(ExperimentalPagingApi::class)
 class StoryRemoteMediator(
@@ -23,7 +24,7 @@ class StoryRemoteMediator(
     override suspend fun load(
         loadType: LoadType,
         state: PagingState<Int, Story>
-    ): MediatorResult {
+    ): MediatorResult = wrapEspressoIdlingResource {
         val page = when (loadType) {
             LoadType.REFRESH -> {
                 val remoteKeys = getRemoteKeyClosestToCurrentPosition(state)

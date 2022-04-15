@@ -13,7 +13,6 @@ import com.rizqitsani.storyapp.domain.model.Story
 import okhttp3.MultipartBody
 import okhttp3.RequestBody
 
-
 class StoryRepository(
     private val storyDatabase: StoryDatabase,
     private val apiService: ApiService

@@ -108,6 +108,7 @@ class LoginFragment : Fragment() {
                 showLoading(true)
             }
             is Result.Success -> {
+                (activity as MainActivity).setFullscreen(false)
                 showLoading(false)
             }
             is Result.Error -> {
