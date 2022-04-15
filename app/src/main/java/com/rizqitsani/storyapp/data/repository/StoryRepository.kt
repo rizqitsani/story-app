@@ -3,17 +3,13 @@ package com.rizqitsani.storyapp.data.repository
 import android.util.Log
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.liveData
-import androidx.paging.ExperimentalPagingApi
-import androidx.paging.Pager
-import androidx.paging.PagingConfig
-import androidx.paging.PagingData
+import androidx.paging.*
 import com.rizqitsani.storyapp.data.Result
 import com.rizqitsani.storyapp.data.database.StoryDatabase
 import com.rizqitsani.storyapp.data.local.StoryRemoteMediator
 import com.rizqitsani.storyapp.data.remote.response.AddStoryResponse
 import com.rizqitsani.storyapp.data.remote.retrofit.ApiService
 import com.rizqitsani.storyapp.domain.model.Story
-import kotlinx.coroutines.flow.Flow
 import okhttp3.MultipartBody
 import okhttp3.RequestBody
 
@@ -36,7 +32,7 @@ class StoryRepository(
         }
     }
 
-    fun getPagedStories(token: String): Flow<PagingData<Story>> {
+    fun getPagedStories(token: String): LiveData<PagingData<Story>> {
         @OptIn(ExperimentalPagingApi::class)
         return Pager(
             config = PagingConfig(
@@ -46,7 +42,7 @@ class StoryRepository(
             pagingSourceFactory = {
                 storyDatabase.storyDao().getAllStory()
             }
-        ).flow
+        ).liveData
     }
 
     fun addStory(

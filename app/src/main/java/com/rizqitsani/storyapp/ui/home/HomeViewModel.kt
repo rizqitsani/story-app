@@ -3,13 +3,11 @@ package com.rizqitsani.storyapp.ui.home
 import android.content.Context
 import androidx.lifecycle.*
 import androidx.paging.PagingData
-import androidx.paging.cachedIn
 import com.rizqitsani.storyapp.data.remote.response.LoginResult
 import com.rizqitsani.storyapp.data.repository.AuthRepository
 import com.rizqitsani.storyapp.data.repository.StoryRepository
 import com.rizqitsani.storyapp.di.Injection
 import com.rizqitsani.storyapp.domain.model.Story
-import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.launch
 
 class HomeViewModel(
@@ -17,21 +15,9 @@ class HomeViewModel(
     private val storyRepository: StoryRepository
 ) :
     ViewModel() {
-    private val _listPagedStory = MutableLiveData<PagingData<Story>>()
-    val listPagedStory: LiveData<PagingData<Story>> = _listPagedStory
-
     val user: LiveData<LoginResult> = authRepository.user.asLiveData()
 
-    fun getPagedStories() {
-        viewModelScope.launch {
-            authRepository.user.collect { user ->
-                storyRepository.getPagedStories("Bearer ${user.token}").cachedIn(viewModelScope)
-                    .collect {
-                        _listPagedStory.value = it
-                    }
-            }
-        }
-    }
+    fun getPagedStories(token:String): LiveData<PagingData<Story>> = storyRepository.getPagedStories("Bearer $token")
 
     fun getStories(token: String) = storyRepository.getStories("Bearer $token")
 

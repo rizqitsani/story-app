@@ -79,10 +79,12 @@ class HomeFragment : Fragment() {
     }
 
     private fun setupObserver() {
-        viewModel.getPagedStories()
-
-        viewModel.listPagedStory.observe(viewLifecycleOwner) {
-            listStoryAdapter.submitData(lifecycle, it)
+        viewModel.user.observe(viewLifecycleOwner) { user ->
+            if (user.token.isNotEmpty()) {
+                viewModel.getPagedStories(user.token).observe(viewLifecycleOwner) {
+                    listStoryAdapter.submitData(lifecycle, it)
+                }
+            }
         }
     }
 
