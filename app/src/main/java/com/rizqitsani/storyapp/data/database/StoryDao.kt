@@ -1,5 +1,6 @@
 package com.rizqitsani.storyapp.data.database
 
+import androidx.lifecycle.LiveData
 import androidx.paging.PagingSource
 import androidx.room.Dao
 import androidx.room.Insert
@@ -14,6 +15,9 @@ interface StoryDao {
 
     @Query("SELECT * FROM story")
     fun getAllStory(): PagingSource<Int, Story>
+
+    @Query("SELECT * FROM story")
+    fun getStories(): LiveData<List<Story>>
 
     @Query("DELETE FROM story")
     suspend fun deleteAll()
