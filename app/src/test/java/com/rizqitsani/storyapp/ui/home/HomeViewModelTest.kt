@@ -1,7 +1,13 @@
 package com.rizqitsani.storyapp.ui.home
 
 import androidx.arch.core.executor.testing.InstantTaskExecutorRule
+import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
+import androidx.paging.AsyncPagingDataDiffer
+import androidx.paging.PagingData
+import androidx.paging.PagingSource
+import androidx.paging.PagingState
+import androidx.recyclerview.widget.ListUpdateCallback
 import com.rizqitsani.storyapp.DataDummy
 import com.rizqitsani.storyapp.MainCoroutineRule
 import com.rizqitsani.storyapp.data.Result
@@ -9,6 +15,7 @@ import com.rizqitsani.storyapp.data.repository.AuthRepository
 import com.rizqitsani.storyapp.data.repository.StoryRepository
 import com.rizqitsani.storyapp.domain.model.Story
 import com.rizqitsani.storyapp.getOrAwaitValue
+import com.rizqitsani.storyapp.ui.home.adapter.ListStoryAdapter
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.flow.flowOf
 import kotlinx.coroutines.test.runBlockingTest
@@ -37,10 +44,12 @@ class HomeViewModelTest {
     @Mock
     private lateinit var storyRepository: StoryRepository
 
+    @Mock
     private lateinit var homeViewModel: HomeViewModel
+
     private val dummyStories = DataDummy.generateDummyStories()
     private val dummyToken = DataDummy.generateDummyToken()
-    private val dummyUser= DataDummy.generateDummyUser()
+    private val dummyUser = DataDummy.generateDummyUser()
 
     @Before
     fun setUp() {
@@ -48,6 +57,32 @@ class HomeViewModelTest {
             flowOf(dummyUser)
         )
         homeViewModel = HomeViewModel(authRepository, storyRepository)
+    }
+
+    @Test
+    fun `when Get Paged Stories Should Not Null`() = mainCoroutineRules.runBlockingTest {
+        val dummyStories = DataDummy.generateDummyStories()
+        val data = PagedTestDataSources.snapshot(dummyStories)
+        val quote = MutableLiveData<PagingData<Story>>()
+        quote.value = data
+
+        `when`(homeViewModel.getPagedStories(dummyToken)).thenReturn(quote)
+        val actualStories = homeViewModel.getPagedStories(dummyToken).getOrAwaitValue()
+
+        val differ = AsyncPagingDataDiffer(
+            diffCallback = ListStoryAdapter.DIFF_CALLBACK,
+            updateCallback = noopListUpdateCallback,
+            mainDispatcher = mainCoroutineRules.dispatcher,
+            workerDispatcher = mainCoroutineRules.dispatcher,
+        )
+        differ.submitData(actualStories)
+
+        advanceUntilIdle()
+
+        Mockito.verify(storyRepository).getPagedStories("Bearer $dummyToken")
+        Assert.assertNotNull(differ.snapshot())
+        Assert.assertEquals(dummyStories.size, differ.snapshot().size)
+        Assert.assertEquals(dummyStories[0].description, differ.snapshot()[0]?.description)
     }
 
     @Test
@@ -82,4 +117,28 @@ class HomeViewModelTest {
         homeViewModel.logout()
         Mockito.verify(authRepository).logout()
     }
+}
+
+class PagedTestDataSources private constructor() :
+    PagingSource<Int, LiveData<List<Story>>>() {
+    companion object {
+        fun snapshot(items: List<Story>): PagingData<Story> {
+            return PagingData.from(items)
+        }
+    }
+
+    override fun getRefreshKey(state: PagingState<Int, LiveData<List<Story>>>): Int {
+        return 0
+    }
+
+    override suspend fun load(params: LoadParams<Int>): LoadResult<Int, LiveData<List<Story>>> {
+        return LoadResult.Page(emptyList(), 0, 1)
+    }
+}
+
+val noopListUpdateCallback = object : ListUpdateCallback {
+    override fun onInserted(position: Int, count: Int) {}
+    override fun onRemoved(position: Int, count: Int) {}
+    override fun onMoved(fromPosition: Int, toPosition: Int) {}
+    override fun onChanged(position: Int, count: Int, payload: Any?) {}
 }
