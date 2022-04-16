@@ -20,7 +20,7 @@ import org.mockito.junit.MockitoJUnitRunner
 
 @ExperimentalCoroutinesApi
 @RunWith(MockitoJUnitRunner::class)
-class LoginViewModelTest {
+class SignupViewModelTest {
     @get:Rule
     var instantExecutorRule = InstantTaskExecutorRule()
 

@@ -62,7 +62,7 @@ class StoryRepositoryTest {
     fun `when Get Stories Should Not Null and Return Success`() =
         mainCoroutineRule.runBlockingTest {
             val expectedStories = DataDummy.generateDummyStoriesResponse()
-            val actualStories = apiService.getStories(dummyToken)
+            val actualStories = apiService.getStoriesWithLocation(dummyToken)
             Assert.assertNotNull(actualStories)
             Assert.assertEquals(expectedStories.size, actualStories.listStory.size)
         }

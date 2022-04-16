@@ -90,10 +90,10 @@ class HomeViewModelTest {
         val expectedStories = MutableLiveData<Result<List<Story>>>()
         expectedStories.value = Result.Success(dummyStories)
 
-        `when`(homeViewModel.getStories(dummyToken)).thenReturn(expectedStories)
-        val actualStories = homeViewModel.getStories(dummyToken).getOrAwaitValue()
+        `when`(homeViewModel.getStoriesWithLocation(dummyToken)).thenReturn(expectedStories)
+        val actualStories = homeViewModel.getStoriesWithLocation(dummyToken).getOrAwaitValue()
 
-        Mockito.verify(storyRepository).getStories("Bearer $dummyToken")
+        Mockito.verify(storyRepository).getStoriesWithLocation("Bearer $dummyToken")
         Assert.assertNotNull(actualStories)
         Assert.assertTrue(actualStories is Result.Success)
         Assert.assertEquals(dummyStories.size, (actualStories as Result.Success).data.size)
@@ -104,10 +104,10 @@ class HomeViewModelTest {
         val stories = MutableLiveData<Result<List<Story>>>()
         stories.value = Result.Error("Error")
 
-        `when`(homeViewModel.getStories(dummyToken)).thenReturn(stories)
-        val actualStories = homeViewModel.getStories(dummyToken).getOrAwaitValue()
+        `when`(homeViewModel.getStoriesWithLocation(dummyToken)).thenReturn(stories)
+        val actualStories = homeViewModel.getStoriesWithLocation(dummyToken).getOrAwaitValue()
 
-        Mockito.verify(storyRepository).getStories("Bearer $dummyToken")
+        Mockito.verify(storyRepository).getStoriesWithLocation("Bearer $dummyToken")
         Assert.assertNotNull(actualStories)
         Assert.assertTrue(actualStories is Result.Error)
     }

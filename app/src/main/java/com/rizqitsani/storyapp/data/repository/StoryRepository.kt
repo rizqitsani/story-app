@@ -17,10 +17,10 @@ class StoryRepository(
     private val storyDatabase: StoryDatabase,
     private val apiService: ApiService
 ) {
-    fun getStories(token: String): LiveData<Result<List<Story>>> = liveData {
+    fun getStoriesWithLocation(token: String): LiveData<Result<List<Story>>> = liveData {
         emit(Result.Loading)
         try {
-            val response = apiService.getStories(token)
+            val response = apiService.getStoriesWithLocation(token)
             val stories = response.listStory.map {
                 Story(it.id, it.name, it.description, it.photoUrl, it.lat, it.lon)
             }

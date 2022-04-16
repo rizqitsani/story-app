@@ -21,7 +21,7 @@ class FakeApiService : ApiService {
         return LoginResponse(dummyUser, false, "Success.")
     }
 
-    override suspend fun getStories(token: String): ListStoryResponse {
+    override suspend fun getStoriesWithLocation(token: String): ListStoryResponse {
         return ListStoryResponse(dummyStories, false, "Success.")
     }
 

@@ -10,6 +10,7 @@ import android.view.ViewGroup
 import android.widget.Toast
 import androidx.core.view.isVisible
 import androidx.fragment.app.viewModels
+import com.google.android.gms.maps.CameraUpdateFactory
 import com.google.android.gms.maps.GoogleMap
 import com.google.android.gms.maps.OnMapReadyCallback
 import com.google.android.gms.maps.SupportMapFragment
@@ -56,7 +57,7 @@ class MapFragment : Fragment(), OnMapReadyCallback {
     private fun setupObserver() {
         viewModel.user.observe(viewLifecycleOwner) {
             if (it.token.isNotEmpty()) {
-                viewModel.getStories(it.token).observe(viewLifecycleOwner) { result ->
+                viewModel.getStoriesWithLocation(it.token).observe(viewLifecycleOwner) { result ->
                     if (result != null) {
                         when (result) {
                             is Result.Loading -> {
@@ -78,6 +79,8 @@ class MapFragment : Fragment(), OnMapReadyCallback {
     }
 
     private fun setListStoryMap(storyList: List<Story>) {
+        val firstLocation = LatLng(storyList[0].lat ?: 0.0, storyList[0].lon ?: 0.0)
+        mMap.animateCamera(CameraUpdateFactory.newLatLngZoom(firstLocation, 15f))
         storyList.forEach {
             if (it.lat !== null && it.lon !== null)
                 mMap.addMarker(MarkerOptions().position(LatLng(it.lat, it.lon)).title(it.name))

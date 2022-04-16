@@ -19,7 +19,7 @@ class HomeViewModel(
 
     fun getPagedStories(token:String): LiveData<PagingData<Story>> = storyRepository.getPagedStories("Bearer $token")
 
-    fun getStories(token: String) = storyRepository.getStories("Bearer $token")
+    fun getStoriesWithLocation(token: String) = storyRepository.getStoriesWithLocation("Bearer $token")
 
     fun logout() = viewModelScope.launch {
         authRepository.logout()

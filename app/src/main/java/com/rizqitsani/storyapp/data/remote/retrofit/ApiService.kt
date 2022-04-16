@@ -25,8 +25,8 @@ interface ApiService {
         @Field("password") password: String
     ): LoginResponse
 
-    @GET("stories")
-    suspend fun getStories(
+    @GET("stories?location=1")
+    suspend fun getStoriesWithLocation(
         @Header("Authorization") token: String
     ): ListStoryResponse
 
