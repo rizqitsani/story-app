@@ -88,7 +88,9 @@ dependencies {
     implementation "androidx.camera:camera-view:${camerax_version}"
 
     // Maps
-    implementation 'com.google.android.gms:play-services-maps:18.0.2'
+    def map_version = "18.0.0"
+    implementation "com.google.android.gms:play-services-maps:${map_version}"
+    implementation "com.google.android.gms:play-services-location:${map_version}"
 
     // Paging
     implementation 'androidx.paging:paging-runtime-ktx:3.1.1'

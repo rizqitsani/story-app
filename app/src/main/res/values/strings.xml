@@ -28,6 +28,8 @@
     <string name="upload">Upload</string>
     <string name="take_photo">Take picture</string>
     <string name="switch_camera">Switch camera</string>
+    <string name="location_not_found">Location is not found. Try Again</string>
+    <string name="image_not_found">Please take a picture first</string>
 
     <string name="map_view">Map View</string>
 </resources>

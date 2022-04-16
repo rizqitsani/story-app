@@ -4,6 +4,7 @@ import android.Manifest
 import android.content.Intent
 import android.content.pm.PackageManager
 import android.graphics.BitmapFactory
+import android.location.Location
 import android.net.Uri
 import android.os.Bundle
 import androidx.fragment.app.Fragment
@@ -18,6 +19,8 @@ import androidx.fragment.app.setFragmentResultListener
 import androidx.fragment.app.viewModels
 import androidx.navigation.Navigation
 import androidx.navigation.findNavController
+import com.google.android.gms.location.FusedLocationProviderClient
+import com.google.android.gms.location.LocationServices
 import com.rizqitsani.storyapp.R
 import com.rizqitsani.storyapp.data.Result
 import com.rizqitsani.storyapp.data.remote.response.AddStoryResponse
@@ -29,7 +32,6 @@ import com.rizqitsani.storyapp.utils.uriToFile
 import okhttp3.MediaType.Companion.toMediaType
 import okhttp3.MediaType.Companion.toMediaTypeOrNull
 import okhttp3.MultipartBody
-import okhttp3.RequestBody
 import okhttp3.RequestBody.Companion.asRequestBody
 import okhttp3.RequestBody.Companion.toRequestBody
 import java.io.File
@@ -42,6 +44,8 @@ class AddStoryFragment : Fragment() {
     }
 
     private var getFile: File? = null
+    private var location: Location? = null
+    private lateinit var fusedLocationClient: FusedLocationProviderClient
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -72,7 +76,9 @@ class AddStoryFragment : Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
-        setupPermission()
+        fusedLocationClient = LocationServices.getFusedLocationProviderClient(requireActivity())
+        getMyLastLocation()
+        setupCameraPermission()
         setupAction()
     }
 
@@ -81,7 +87,20 @@ class AddStoryFragment : Fragment() {
             Navigation.createNavigateOnClickListener(R.id.action_addStoryFragment_to_cameraFragment)
         )
         binding?.galleryButton?.setOnClickListener { startGallery() }
-        binding?.uploadButton?.setOnClickListener { uploadImage() }
+        binding?.uploadButton?.setOnClickListener {
+            val description = binding?.descriptionEditText?.text.toString()
+            when {
+                description.isEmpty() -> {
+                    binding?.descriptionEditText?.error = "Masukkan deskripsi"
+                }
+                getFile == null -> {
+                    showMessage(getString(R.string.image_not_found))
+                }
+                else -> {
+                    uploadImage()
+                }
+            }
+        }
     }
 
     private fun startGallery() {
@@ -107,8 +126,12 @@ class AddStoryFragment : Fragment() {
         val file = reduceFileImage(getFile as File)
 
         val description =
-            binding?.descriptionEditText?.text?.toString()
-                ?.toRequestBody("text/plain".toMediaType())
+            binding?.descriptionEditText?.text.toString()
+                .toRequestBody("text/plain".toMediaType())
+        val lat =
+            location?.latitude.toString().toRequestBody("text/plain".toMediaType())
+        val lon =
+            location?.longitude.toString().toRequestBody("text/plain".toMediaType())
         val requestImageFile = file.asRequestBody("image/jpeg".toMediaTypeOrNull())
         val imageMultipart: MultipartBody.Part = MultipartBody.Part.createFormData(
             "photo",
@@ -117,7 +140,13 @@ class AddStoryFragment : Fragment() {
         )
 
         viewModel.user.observe(viewLifecycleOwner) { user ->
-            viewModel.addStory(user.token, imageMultipart, description as RequestBody)
+            viewModel.addStory(
+                user.token,
+                imageMultipart,
+                description,
+                lat,
+                lon
+            )
                 .observe(viewLifecycleOwner) {
                     addStoryObserver(it)
                 }
@@ -140,24 +169,58 @@ class AddStoryFragment : Fragment() {
         }
     }
 
-    private fun setupPermission() {
-        val permission = ContextCompat.checkSelfPermission(
-            requireContext(), REQUIRED_PERMISSIONS
-        )
-
-        if (permission != PackageManager.PERMISSION_GRANTED) {
-            permissionsResultCallback.launch(REQUIRED_PERMISSIONS)
+    private fun setupCameraPermission() {
+        if (!checkPermission(Manifest.permission.CAMERA)) {
+            requestPermissionLauncher.launch(arrayOf(Manifest.permission.CAMERA))
         }
     }
 
-    private val permissionsResultCallback = registerForActivityResult(
-        ActivityResultContracts.RequestPermission()
-    ) {
-        when (it) {
-            true -> {
+    private fun checkPermission(permission: String): Boolean {
+        return ContextCompat.checkSelfPermission(
+            requireActivity(),
+            permission
+        ) == PackageManager.PERMISSION_GRANTED
+    }
+
+    private fun getMyLastLocation() {
+        if (checkPermission(Manifest.permission.ACCESS_FINE_LOCATION) &&
+            checkPermission(Manifest.permission.ACCESS_COARSE_LOCATION)
+        ) {
+            fusedLocationClient.lastLocation.addOnSuccessListener { lastLocation: Location? ->
+                if (lastLocation != null) {
+                    location = lastLocation
+                } else {
+                    Toast.makeText(
+                        activity,
+                        getString(R.string.location_not_found),
+                        Toast.LENGTH_SHORT
+                    ).show()
+                }
+            }
+        } else {
+            requestPermissionLauncher.launch(
+                arrayOf(
+                    Manifest.permission.ACCESS_FINE_LOCATION,
+                    Manifest.permission.ACCESS_COARSE_LOCATION
+                )
+            )
+        }
+    }
+
+    private val requestPermissionLauncher = registerForActivityResult(
+        ActivityResultContracts.RequestMultiplePermissions()
+    ) { permissions ->
+        when {
+            permissions[Manifest.permission.CAMERA] == true -> {
                 println("Permission has been granted by user")
             }
-            false -> {
+            permissions[Manifest.permission.ACCESS_FINE_LOCATION] ?: false -> {
+                getMyLastLocation()
+            }
+            permissions[Manifest.permission.ACCESS_COARSE_LOCATION] ?: false -> {
+                getMyLastLocation()
+            }
+            else -> {
                 Toast.makeText(
                     activity,
                     "Tidak mendapatkan permission.",
@@ -181,9 +244,5 @@ class AddStoryFragment : Fragment() {
     override fun onDestroy() {
         super.onDestroy()
         _binding = null
-    }
-
-    companion object {
-        private const val REQUIRED_PERMISSIONS = Manifest.permission.CAMERA
     }
 }

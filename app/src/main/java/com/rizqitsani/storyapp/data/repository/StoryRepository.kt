@@ -47,11 +47,13 @@ class StoryRepository(
     fun addStory(
         token: String,
         imageMultipart: MultipartBody.Part,
-        description: RequestBody
+        description: RequestBody,
+        lat: RequestBody?,
+        lon: RequestBody?
     ): LiveData<Result<AddStoryResponse>> = liveData {
         emit(Result.Loading)
         try {
-            val response = apiService.uploadImage(token, imageMultipart, description)
+            val response = apiService.uploadImage(token, imageMultipart, description, lat, lon)
             emit(Result.Success(response))
         } catch (e: Exception) {
             Log.d(TAG, "addStory: ${e.message.toString()} ")

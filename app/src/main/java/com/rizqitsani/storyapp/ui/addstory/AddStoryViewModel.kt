@@ -15,8 +15,14 @@ class AddStoryViewModel(
 ) : ViewModel() {
     val user: LiveData<LoginResult> = authRepository.user.asLiveData()
 
-    fun addStory(token: String, imageMultipart: MultipartBody.Part, description: RequestBody) =
-        storyRepository.addStory("Bearer $token", imageMultipart, description)
+    fun addStory(
+        token: String,
+        imageMultipart: MultipartBody.Part,
+        description: RequestBody,
+        lat: RequestBody?,
+        lon: RequestBody?
+    ) =
+        storyRepository.addStory("Bearer $token", imageMultipart, description, lat, lon)
 }
 
 class AddStoryViewModelFactory(private val context: Context) :

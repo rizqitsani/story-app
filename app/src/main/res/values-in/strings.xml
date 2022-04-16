@@ -29,6 +29,8 @@
     <string name="upload">Unggah</string>
     <string name="take_photo">Ambil gambar</string>
     <string name="switch_camera">Putar kamera</string>
+    <string name="location_not_found">Lokasi tidak ditemukan. Coba lagi</string>
+    <string name="image_not_found">Anda belum mengambil gambar</string>
 
     <string name="map_view">Tampilan Map</string>
 </resources>
