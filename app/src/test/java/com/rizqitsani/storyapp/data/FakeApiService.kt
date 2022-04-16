@@ -32,7 +32,9 @@ class FakeApiService : ApiService {
     override suspend fun uploadImage(
         token: String,
         file: MultipartBody.Part,
-        description: RequestBody
+        description: RequestBody,
+        lat: RequestBody?,
+        lon: RequestBody?
     ): AddStoryResponse {
         return AddStoryResponse(false, "Success.")
     }

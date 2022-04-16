@@ -49,6 +49,8 @@ class AddStoryViewModelTest {
     private val file = Mockito.mock(File::class.java)
     private val description =
         "Description".toRequestBody("text/plain".toMediaType())
+    private val lat = (0.0).toString().toRequestBody("text/plain".toMediaType())
+    private val lon = (0.0).toString().toRequestBody("text/plain".toMediaType())
     private val requestImageFile = file.asRequestBody("image/jpeg".toMediaTypeOrNull())
     private val imageMultipart: MultipartBody.Part = MultipartBody.Part.createFormData(
         "photo",
@@ -69,13 +71,23 @@ class AddStoryViewModelTest {
         val expectedResponse = MutableLiveData<Result<AddStoryResponse>>()
         expectedResponse.value = Result.Success(AddStoryResponse(false, "Success."))
 
-        `when`(addStoryViewModel.addStory(dummyToken, imageMultipart, description)).thenReturn(
+        `when`(
+            addStoryViewModel.addStory(
+                dummyToken,
+                imageMultipart,
+                description,
+                lat,
+                lon
+            )
+        ).thenReturn(
             expectedResponse
         )
         val actualResponse =
-            addStoryViewModel.addStory(dummyToken, imageMultipart, description).getOrAwaitValue()
+            addStoryViewModel.addStory(dummyToken, imageMultipart, description, lat, lon)
+                .getOrAwaitValue()
 
-        Mockito.verify(storyRepository).addStory("Bearer $dummyToken", imageMultipart, description)
+        Mockito.verify(storyRepository)
+            .addStory("Bearer $dummyToken", imageMultipart, description, lat, lon)
         Assert.assertNotNull(actualResponse)
         Assert.assertTrue(actualResponse is Result.Success)
         Assert.assertEquals(false, (actualResponse as Result.Success).data.error)
@@ -86,13 +98,23 @@ class AddStoryViewModelTest {
         val expectedResponse = MutableLiveData<Result<AddStoryResponse>>()
         expectedResponse.value = Result.Error("Error")
 
-        `when`(addStoryViewModel.addStory(dummyToken, imageMultipart, description)).thenReturn(
+        `when`(
+            addStoryViewModel.addStory(
+                dummyToken,
+                imageMultipart,
+                description,
+                lat,
+                lon
+            )
+        ).thenReturn(
             expectedResponse
         )
         val actualResponse =
-            addStoryViewModel.addStory(dummyToken, imageMultipart, description).getOrAwaitValue()
+            addStoryViewModel.addStory(dummyToken, imageMultipart, description, lat, lon)
+                .getOrAwaitValue()
 
-        Mockito.verify(storyRepository).addStory("Bearer $dummyToken", imageMultipart, description)
+        Mockito.verify(storyRepository)
+            .addStory("Bearer $dummyToken", imageMultipart, description, lat, lon)
         Assert.assertNotNull(actualResponse)
         Assert.assertTrue(actualResponse is Result.Error)
     }
